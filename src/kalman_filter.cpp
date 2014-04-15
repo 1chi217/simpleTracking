@@ -37,7 +37,6 @@ KalmanFilter::KalmanFilter(float dt, float q, float r, float P, float x0 = 0, fl
 }
 
 KalmanFilter::~KalmanFilter() {
-    // TODO Auto-generated destructor stub
 }
 
 void KalmanFilter::setPosition(float x0, float y0){

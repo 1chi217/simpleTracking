@@ -38,6 +38,7 @@ public:
 
     void setTimeStep(float dt);
     Eigen::Vector4f getState();
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 };
 

@@ -111,7 +111,7 @@ include_directories(
 add_library(kflib src/kalman_filter.cpp)
 add_library(seglib src/segmentation.cpp)
 add_library(pathlib src/path.cpp)
-
+add_library(trackerlib src/tracker.cpp)
 
 ## Declare a cpp executable
 # add_executable(simple_tracking_node src/simple_tracking_node.cpp)
@@ -123,6 +123,7 @@ add_executable(simple_tracking src/simple_tracking.cpp)
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(simple_tracking
+   trackerlib   
    seglib
    kflib
    pathlib

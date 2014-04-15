@@ -166,7 +166,7 @@ void Segmentation::cluster(pcl::PointCloud<pcl::PointXYZI>::Ptr out){
         pcl::compute3DCentroid (*cloud_cluster, centroid);
         if((max[2] - min[2]) < 2.0 && (max[1] - min[1]) < 1.2 && (max[0] - min[0]) < 1.2){
             if(centroid[2] < 0 && centroid[2] > -1.60 &&
-                    sqrt(centroid[0]*centroid[0] +  centroid[1]*centroid[1]) < 10){
+                    sqrt((float)(centroid[0]*centroid[0] +  centroid[1]*centroid[1])) < 10){
                 for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); pit++){
                     pcl::PointXYZI intensityP;
                     pcl::PointXYZ oldP = cloud->points[*pit];
