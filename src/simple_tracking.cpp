@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 
 #include <std_msgs/Float32.h>
+#include <std_msgs/String.h>
 #include <visualization_msgs/Marker.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/Twist.h>
@@ -14,6 +15,7 @@
 #include "segmentation.hpp"
 #include "path.hpp"
 
+#include "stdlib.h"
 
 #include <tf/transform_listener.h>
 #include <tf/tf.h>
@@ -22,23 +24,33 @@
 
 sensor_msgs::PointCloud2::ConstPtr PclMsg;
 
-bool recPcl;
+bool recPcl, drive;
 
 void cloudCb (const sensor_msgs::PointCloud2::ConstPtr& msg) {
     PclMsg = msg;
     recPcl = true;
 }
 
+void voiceCb (const std_msgs::String::ConstPtr& msg) {
+    std::string cmd = msg->data;
+    if (cmd.compare("follow me") == 0 || cmd.compare("follow") == 0 || cmd.compare("start") == 0 ){
+        drive = true;
+    } else if (cmd.compare("stop") == 0 || cmd.compare("halt") == 0){
+        drive = false;
+    }
+}
+
 int main(int argc, char** argv) {
     ros::init(argc, argv, "simple_tracking");
     ros::NodeHandle nh;
-    ros::Subscriber pclSub;
+    ros::Subscriber pclSub, voiceSub;
     ros::Publisher slizePub, personPub, cmdPub;
 
 //    tf::TransformListener listener;
 
     ros::Publisher vis_pub = nh.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
     pclSub = nh.subscribe("velodyne_points", 1, cloudCb);
+    voiceSub = nh.subscribe("/recognizer_1/output", 1, voiceCb);
     slizePub = nh.advertise<sensor_msgs::PointCloud2> ("velodyne_slize",1);
     personPub = nh.advertise<sensor_msgs::PointCloud2> ("velodyne_person",1);
     cmdPub = nh.advertise<geometry_msgs::Twist> ("follow_cmd",1);
@@ -61,6 +73,22 @@ int main(int argc, char** argv) {
     Path path;
 
     while(ros::ok()){
+
+
+        // TODO: Michael change!
+        if(drive){
+            geometry_msgs::Twist vel_cmd;
+            vel_cmd.linear.x = 1;
+            ROS_INFO("l %f a %f", vel_cmd.linear.x, vel_cmd.angular.z);
+            cmdPub.publish(vel_cmd);
+        } else {
+            geometry_msgs::Twist vel_cmd;
+            ROS_INFO("l %f a %f", vel_cmd.linear.x, vel_cmd.angular.z);
+            cmdPub.publish(vel_cmd);
+        }
+
+
+
 
         // if we have received a new pointcloud
         if(recPcl){
@@ -159,6 +187,8 @@ int main(int argc, char** argv) {
 
             ROS_INFO("l %f a %f", vel_cmd.linear.x, vel_cmd.angular.z);
             cmdPub.publish(vel_cmd);
+
+
 
             visualization_msgs::Marker marker;
             marker.header.frame_id = "velodyne";
