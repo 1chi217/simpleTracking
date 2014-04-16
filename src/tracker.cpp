@@ -113,9 +113,9 @@ void Tracker::cloudCb (const sensor_msgs::PointCloud2::ConstPtr& msg){
 				 if(firstrun){
 					 firstrun = false;
 					 threshold = MIN_FOLLOW_THRESHOLD;
-					 kf.setPosition((float) centroids.at(min)[0], (float) centroids.at(min)[1]);
+					 kf.setPosition((float) (centroids.at(min)[0]), (float) (centroids.at(min)[1]));
 				 }
-				 kf.process((float) centroids.at(min)[0], (float) centroids.at(min)[1]);
+				 kf.process((float) (centroids.at(min)[0]), (float) (centroids.at(min)[1]));
 
 				 Eigen::Vector4f newPos = kf.getState();
 				 pos.x = newPos[0];
@@ -125,7 +125,7 @@ void Tracker::cloudCb (const sensor_msgs::PointCloud2::ConstPtr& msg){
 
 				 pos.theta = atan2(pos.y, pos.x);
 				 if(pos.theta < 0){
-					 pos.theta += M_2_PI;
+					 pos.theta += 2 * M_PI;
 				 }
 
 				 threshold = MIN_FOLLOW_THRESHOLD;
@@ -147,6 +147,9 @@ void Tracker::cloudCb (const sensor_msgs::PointCloud2::ConstPtr& msg){
 					 threshold += STEP_FOLLOW_THRESHOLD;
 				 if(fov < MAX_FOV)
 					 fov += STEP_FOV;
+				geometry_msgs::Twist vel_cmd;
+				ROS_INFO("l %f a %f", vel_cmd.linear.x, vel_cmd.angular.z);
+				velCmdPub.publish(vel_cmd);
 			}
 		}
 	}
