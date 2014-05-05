@@ -8,6 +8,7 @@
 #ifndef SEGMENTATION_H_
 #define SEGMENTATION_H_
 
+#include <ros/ros.h>
 #include <pcl/ModelCoefficients.h>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
@@ -26,31 +27,31 @@
 #include <stdlib.h>
 
 class Segmentation {
-private:
+protected:
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
     std::vector<Eigen::Vector4f,Eigen::aligned_allocator<Eigen::Vector4f> > centroids;
     int maxClusterSize;
     int minClusterSize;
-    float clusterTolerance;
+    double clusterTolerance;
 
-    int findIdx(float angle);
+    int findIdx(double angle);
 
 public:
-    Segmentation(int maxClusterSize = 2500, int minClusterSize = 25, int clusterTolerance = 0.30);
+    Segmentation(int maxClusterSize = 2500, int minClusterSize = 25, double clusterTolerance = 0.30);
     virtual ~Segmentation();
 
     void setInputCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr in);
-    void cutOutSector(float angle, int fov, pcl::PointCloud<pcl::PointXYZ>::Ptr out);
+    void cutOutSector(double angle, int fov, pcl::PointCloud<pcl::PointXYZ>::Ptr out);
     void removeFloor(pcl::PointCloud<pcl::PointXYZ>::Ptr out);
     void cluster(pcl::PointCloud<pcl::PointXYZI>::Ptr out);
 
-    void process(float angle, int fov, pcl::PointCloud<pcl::PointXYZI>::Ptr out);
+    void process(double angle, int fov, pcl::PointCloud<pcl::PointXYZI>::Ptr out);
 
     std::vector<Eigen::Vector4f,Eigen::aligned_allocator<Eigen::Vector4f> >  getCentroids();
 
     void setMaxClusterSize(int maxClusterSize);
     void setMinClusterSize(int minClusterSize);
-    void setClusterTolerance(float clusterTolerance);
+    void setClusterTolerance(double clusterTolerance);
 
 };
 

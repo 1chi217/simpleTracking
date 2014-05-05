@@ -1,5 +1,5 @@
 /*
- * KalmanFilter.cpp
+ * Segmentation.cpp
  *
  *  Created on: 24.03.2014
  *      Author: Michael
@@ -7,7 +7,8 @@
 #include <ros/ros.h>
 #include "segmentation.hpp"
 
-Segmentation::Segmentation(int maxClusterSize, int minClusterSize, int clusterTolerance){
+
+Segmentation::Segmentation(int maxClusterSize, int minClusterSize, double clusterTolerance){
 
     this->maxClusterSize = maxClusterSize;
     this->minClusterSize = minClusterSize;
@@ -18,10 +19,10 @@ Segmentation::~Segmentation() {
 
 }
 
-int Segmentation::findIdx(float goal){
+int Segmentation::findIdx(double goal){
 
-    float angle, distCCW, distCW;
-    float minAngle, cenAngle, maxAngle;
+    double angle, distCCW, distCW;
+    double minAngle, cenAngle, maxAngle;
     int pos = 0, step = cloud->points.size()/4;
 
     if(goal < 0)
@@ -78,7 +79,7 @@ int Segmentation::findIdx(float goal){
     return pos;
 }
 
-void Segmentation::cutOutSector(float angle, int fov, pcl::PointCloud<pcl::PointXYZ>::Ptr out){
+void Segmentation::cutOutSector(double angle, int fov, pcl::PointCloud<pcl::PointXYZ>::Ptr out){
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_f (new pcl::PointCloud<pcl::PointXYZ>);
     int idx = findIdx(angle);
     if(idx != -1 && idx > (fov+1) && idx < cloud->points.size() - (fov+1)){
@@ -166,7 +167,7 @@ void Segmentation::cluster(pcl::PointCloud<pcl::PointXYZI>::Ptr out){
         pcl::compute3DCentroid (*cloud_cluster, centroid);
         if((max[2] - min[2]) < 2.0 && (max[1] - min[1]) < 1.2 && (max[0] - min[0]) < 1.2){
             if(centroid[2] < 0 && centroid[2] > -1.60 &&
-                    sqrt((float)(centroid[0]*centroid[0] +  centroid[1]*centroid[1])) < 10){
+                    sqrt((double)(centroid[0]*centroid[0] +  centroid[1]*centroid[1])) < 10){
                 for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); pit++){
                     pcl::PointXYZI intensityP;
                     pcl::PointXYZ oldP = cloud->points[*pit];
@@ -184,7 +185,7 @@ void Segmentation::cluster(pcl::PointCloud<pcl::PointXYZI>::Ptr out){
     *out = *cloud_f;
 }
 
-void Segmentation::process(float angle, int fov,pcl::PointCloud<pcl::PointXYZI>::Ptr out){
+void Segmentation::process(double angle, int fov,pcl::PointCloud<pcl::PointXYZI>::Ptr out){
     pcl::PointCloud<pcl::PointXYZ>::Ptr tmp (new pcl::PointCloud<pcl::PointXYZ>);
     cutOutSector(angle, fov, tmp);
     removeFloor(tmp);
@@ -207,6 +208,6 @@ void Segmentation::setMinClusterSize(int minClusterSize){
     this->minClusterSize = minClusterSize;
 }
 
-void Segmentation::setClusterTolerance(float clusterTolerance){
+void Segmentation::setClusterTolerance(double clusterTolerance){
     this->clusterTolerance = clusterTolerance;
 }

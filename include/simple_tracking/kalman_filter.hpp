@@ -26,6 +26,7 @@ private:
     Eigen::Matrix4f Ppos;
 
 public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     KalmanFilter(float dt, float q, float r, float P, float x0, float y0);
     virtual ~KalmanFilter();
 
@@ -38,7 +39,7 @@ public:
 
     void setTimeStep(float dt);
     Eigen::Vector4f getState();
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 
 };
 

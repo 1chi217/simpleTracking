@@ -31,6 +31,7 @@
 #include "kalman_filter.hpp"
 #include "segmentation.hpp"
 #include "path.hpp"
+#include "gpb_segmentation.hpp"
 
 #define MIN_FOLLOW_THRESHOLD 	0.40f		// min distance in meters
 #define MAX_FOLLOW_THRESHOLD 	2.0f		// max distance in meters

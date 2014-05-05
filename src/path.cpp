@@ -1,5 +1,5 @@
 /*
- * KalmanFilter.cpp
+ * Path.cpp
  *
  *  Created on: 31.03.2014
  *      Author: Michael
